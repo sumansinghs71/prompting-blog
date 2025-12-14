@@ -61,6 +61,111 @@
             </p>
         </header>
 
+        <!-- Blog Content Start -->
+        <article class="prose prose-slate lg:prose-lg mx-auto">
+            
+            <p class="lead">The format you choose for your Large Language Model (LLM) prompts is not just a style choice—it's a critical architectural decision. It directly impacts reliability, security, token count, and performance. In this deep dive, we compare the leading formats used in production: Markdown, XML, JSON, YAML, and the ultimate hybrid approach.</p>
+
+            <h2 id="security" class="mt-12 text-3xl font-bold text-slate-800">1. Security and Robustness: Safety First</h2>
+            <p>Injection attacks and schema brittleness are major pitfalls in production LLM systems. Choosing a format that provides clear, machine-readable boundaries is the first step toward system safety. The visualization below scores formats based on their inherent ability to resist prompt injection and maintain structural integrity against model errors.</p>
+            
+            <!-- Chart 1: Security Risk -->
+            <div class="my-8 flex justify-center">
+                <div class="chart-container bg-slate-50 rounded-xl p-4 shadow-inner">
+                    <h3 class="text-center font-semibold text-lg mb-2 text-slate-700">Robustness & Safety Score</h3>
+                    <canvas id="securityChart"></canvas>
+                </div>
+            </div>
+
+            <p><strong>Key Takeaway:</strong> XML emerges as the safest format, scoring high due to its explicit, non-overlapping <code>&lt;tag&gt;</code> boundaries, which significantly minimizes delimiter injection risk, especially when integrating Retrieval-Augmented Generation (RAG) data. Markdown, conversely, presents a high risk due to easy-to-mimic syntax.</p>
+
+            <h2 id="affinity" class="mt-12 text-3xl font-bold text-slate-800">2. Model Affinity: Speaking the Model's Language</h2>
+            <p>Models are trained on vast corpora, leading to inherent biases toward certain data structures. Aligning your prompt format with these biases can lead to more predictable, higher-quality output. The chart below illustrates which models have a known affinity for which formats based on fine-tuning and primary training data.</p>
+
+            <!-- Chart 2: Model Affinity -->
+            <div class="my-8 flex justify-center">
+                <div class="chart-container bg-slate-50 rounded-xl p-4 shadow-inner">
+                    <h3 class="text-center font-semibold text-lg mb-2 text-slate-700">Format Preference by Model Type</h3>
+                    <canvas id="modelAffinityChart"></canvas>
+                </div>
+            </div>
+
+            <p><strong>Key Takeaway:</strong> While general models like GPT-4 handle Markdown excellently, models like Claude are famously optimized for XML. Dedicated JSON-Mode fine-tuning is now common, making JSON the clear winner when strict, verifiable output is required, regardless of the security brittleness in the prompt input.</p>
+
+            <h2 id="breakdown" class="mt-12 text-3xl font-bold text-slate-800">3. Format Deep Dive: When to Use Each</h2>
+            <p>Understanding the individual strengths of each format allows for precise tool selection:</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                <!-- Markdown Card -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-indigo-500">
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">Markdown (System)</h4>
+                    <p class="text-sm text-slate-600"><strong>Best For:</strong> Static system instructions, tool descriptions, and human-readable narratives. High readability and low token overhead make it efficient.</p>
+                </div>
+                <!-- XML Card -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-fuchsia-500">
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">XML (Context)</h4>
+                    <p class="text-sm text-slate-600"><strong>Best For:</strong> Wrapping dynamic user data, document chunks in RAG systems, and any data requiring explicit, safe boundaries.</p>
+                </div>
+                <!-- JSON Card -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-amber-500">
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">JSON (Output)</h4>
+                    <p class="text-sm text-slate-600"><strong>Best For:</strong> Strict, machine-parseable output (like API calls or function schemas). Requires 'JSON Mode' to minimize syntax errors.</p>
+                </div>
+                <!-- YAML Card -->
+                <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-cyan-500">
+                    <h4 class="text-xl font-bold text-slate-900 mb-2">YAML (Config)</h4>
+                    <p class="text-sm text-slate-600"><strong>Best For:</strong> Complex, structured configurations for multi-step agents or internal flow management, where indentation clarity is valued over token efficiency.</p>
+                </div>
+            </div>
+
+            <h2 id="decision" class="mt-12 text-3xl font-bold text-slate-800">4. The Prompting Decision Flow</h2>
+            <p>Follow this quick flow chart to determine the optimal format for your current prompting goal:</p>
+
+            <!-- CSS/HTML Flowchart Implementation -->
+            <div class="flex flex-col items-center max-w-xl mx-auto my-8 p-6 bg-slate-50 rounded-xl shadow-inner">
+                
+                <div class="bg-slate-900 text-white px-8 py-4 rounded-lg shadow-lg font-bold text-center w-64 border-2 border-slate-800">
+                    Start: What is your goal?
+                </div>
+                
+                <div class="flow-line"></div>
+                <div class="flow-arrow">▼</div>
+
+                <div class="grid grid-cols-3 gap-4 w-full mt-4">
+                    
+                    <div class="flex flex-col items-center">
+                        <div class="bg-amber-100 border border-amber-300 text-amber-900 px-3 py-2 rounded-md font-bold text-center text-sm">Output?</div>
+                        <div class="flow-line h-10"></div>
+                        <div class="flow-arrow">▼</div>
+                        <div class="bg-amber-500 text-white px-3 py-2 rounded-lg font-bold text-center text-sm">JSON</div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <div class="bg-fuchsia-100 border border-fuchsia-300 text-fuchsia-900 px-3 py-2 rounded-md font-bold text-center text-sm">Data Context?</div>
+                        <div class="flow-line h-10"></div>
+                        <div class="flow-arrow">▼</div>
+                        <div class="bg-fuchsia-500 text-white px-3 py-2 rounded-lg font-bold text-center text-sm">XML</div>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <div class="bg-indigo-100 border border-indigo-300 text-indigo-900 px-3 py-2 rounded-md font-bold text-center text-sm">Instructions?</div>
+                        <div class="flow-line h-10"></div>
+                        <div class="flow-arrow">▼</div>
+                        <div class="bg-indigo-500 text-white px-3 py-2 rounded-lg font-bold text-center text-sm">Markdown</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <h2 class="mt-12 text-3xl font-bold text-slate-800">Conclusion: The Hybrid Approach is King</h2>
+            <p>In real-world applications, relying on a single format is restrictive. The winning strategy—the <strong>Hybrid approach</strong>—combines the strengths of multiple formats within a single prompt:</p>
+            <blockquote class="bg-emerald-50 border-l-4 border-emerald-500 p-4 italic text-emerald-800 mt-6">
+                Use **Markdown** for system instructions and human-readable tasks. Then, wrap all dynamic, untrusted data (like RAG context or user input) securely within <code>&lt;data&gt;XML&lt;/data&gt;</code> tags. Finally, instruct the model to produce its final output in <code>JSON</code> format. This maximizes security, readability, and machine-parseability.
+            </blockquote>
+        </article>
+        <!-- Blog Content End -->
+
     </div>
 
     <!-- Chart.js Logic -->
